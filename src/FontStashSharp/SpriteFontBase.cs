@@ -277,6 +277,13 @@ namespace FontStashSharp
 			var bounds = TextBounds(text, Utility.Vector2Zero, scale, characterSpacing, lineSpacing, effect, effectAmount);
 			return new Vector2(bounds.X2, bounds.Y2);
 		}
+		public Vector2 MeasureString(ReadOnlySpan<char> text, Vector2? scale = null,
+			float characterSpacing = 0.0f, float lineSpacing = 0.0f,
+			FontSystemEffect effect = FontSystemEffect.None, int effectAmount = 0)
+		{
+			var bounds = TextBounds(text, Utility.Vector2Zero, scale, characterSpacing, lineSpacing, effect, effectAmount);
+			return new Vector2(bounds.X2, bounds.Y2);
+		}
 
 		internal abstract float GetKerning(FontGlyph glyph, FontGlyph prevGlyph);
 
