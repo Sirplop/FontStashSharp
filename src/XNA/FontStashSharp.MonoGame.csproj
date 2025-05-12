@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>FontStashSharp.MonoGame</PackageId>
     <AssemblyName>FontStashSharp.MonoGame</AssemblyName>
     <Description>FontStashSharp for MonoGame</Description>
     <DefineConstants>$(DefineConstants);MONOGAME</DefineConstants>
     <OutputPath>bin\MonoGame\$(Configuration)</OutputPath>
+    <Version>1.3.10.1</Version>
+    <Authors>FontStashSharpTeam</Authors>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
