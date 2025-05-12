@@ -74,7 +74,7 @@ namespace FontStashSharp
 
 			if (StringSpan != null)
 			{
-				if (Position >= StringText.Length)
+				if (Position >= StringSpan.Length)
 				{
 					return false;
 				}
