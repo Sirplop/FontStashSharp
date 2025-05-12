@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace FontStashSharp
 {
 	internal ref struct TextSource
 	{
+		public ReadOnlySpan<char> StringSpan;
 		public StringSegment StringText;
 		public StringBuilder StringBuilderText;
 		private int Position;
@@ -12,6 +14,7 @@ namespace FontStashSharp
 		{
 			StringText = new StringSegment(text);
 			StringBuilderText = null;
+			StringSpan = null;
 			Position = 0;
 		}
 
@@ -19,6 +22,7 @@ namespace FontStashSharp
 		{
 			StringText = text;
 			StringBuilderText = null;
+			StringSpan = null;
 			Position = 0;
 		}
 
@@ -26,10 +30,19 @@ namespace FontStashSharp
 		{
 			StringText = new StringSegment();
 			StringBuilderText = text;
+			StringSpan = null;
 			Position = 0;
 		}
 
-		public bool IsNull => StringText.IsNullOrEmpty && StringBuilderText == null;
+		public TextSource(ReadOnlySpan<char> text)
+		{
+			StringSpan = text;
+			StringText = new StringSegment("");
+			StringBuilderText = null;
+			Position = 0;
+		}
+
+		public bool IsNull => StringText.IsNullOrEmpty && StringBuilderText == null && StringSpan == null;
 
 		public bool GetNextCodepoint(out int result)
 		{
@@ -59,6 +72,18 @@ namespace FontStashSharp
 				return true;
 			}
 
+			if (StringSpan != null)
+			{
+				if (Position >= StringText.Length)
+				{
+					return false;
+				}
+
+				result = SpanConvertToUtf32(in StringSpan, Position);
+				Position += SpanIsSurrogatePair(in StringSpan, Position) ? 2 : 1;
+				return true;
+			}
+
 			return false;
 		}
 
@@ -80,6 +105,18 @@ namespace FontStashSharp
 				return sb[index];
 
 			return char.ConvertToUtf32(sb[index], sb[index + 1]);
+		}
+		private static bool SpanIsSurrogatePair(in ReadOnlySpan<char> span, int index)
+		{
+			if (index + 1 < span.Length)
+				return char.IsSurrogatePair(span[index], span[index + 1]);
+			return false;
+		}
+		private static int SpanConvertToUtf32(in ReadOnlySpan<char> span, int index)
+		{
+			if (!char.IsHighSurrogate(span[index]))
+				return span[index];
+			return char.ConvertToUtf32(span[index], span[index + 1]);
 		}
 
 		public static int CalculateLength(string text)

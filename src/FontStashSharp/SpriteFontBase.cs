@@ -145,6 +145,17 @@ namespace FontStashSharp
 			return bounds;
 		}
 
+		public Bounds TextBounds(ReadOnlySpan<char> text, Vector2 position, Vector2? scale = null,
+			float characterSpacing = 0.0f, float lineSpacing = 0.0f,
+			FontSystemEffect effect = FontSystemEffect.None, int effectAmount = 0)
+		{
+			var bounds = InternalTextBounds(new TextSource(text), position, characterSpacing, lineSpacing, effect, effectAmount);
+
+			var realScale = scale ?? Utility.DefaultScale;
+			bounds.ApplyScale(realScale / RenderFontSizeMultiplicator);
+			return bounds;
+		}
+
 		private List<Glyph> GetGlyphs(TextSource source, Vector2 position, Vector2 origin, Vector2? sourceScale, 
 			float characterSpacing, float lineSpacing, FontSystemEffect effect, int effectAmount)
 		{
